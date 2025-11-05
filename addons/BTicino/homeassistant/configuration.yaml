@@ -1,0 +1,42 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+rest_command:
+  light_level:
+    url: "http://127.0.0.1:8080/lights/{{light}}%239"
+    method: POST
+    payload: >
+      {%- if level is defined -%}
+        { "level": "{{ level }}" }
+      {%- elif brightness is defined -%}
+        { "brightness": {{ brightness }} }
+      {%- endif -%}
+    content_type: "application/json; charset=utf-8"
+    verify_ssl: false
+  shutter_action:
+    url: "http://127.0.0.1:8080/shutters/{{shutter}}%239"
+    method: POST
+    payload: >
+      {%- if action is defined -%}
+        { "action": "{{ action }}" }
+      {%- elif position is defined -%}
+        { "position": {{ position | int }} }
+      {%- endif -%}
+    content_type: "application/json; charset=utf-8"
+    verify_ssl: false
+
+light:
+  - platform: template
+    lights: !include lights.yaml
+
+cover:
+  - platform: template
+    covers: !include covers.yaml

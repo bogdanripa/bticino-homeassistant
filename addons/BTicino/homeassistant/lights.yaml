@@ -1,0 +1,58 @@
+light764906201:
+  friendly_name: "Master Bathroom Mirror Light"
+  value_template: "{{ states('input_number.764906201')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.764906201
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "764906201"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764906201
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "764906201"
+
+light764192001:
+  friendly_name: "Master Bedroom Light"
+  value_template: "{{ states('input_number.764192001')|int > 0 }}"
+  level_template: "{{ states('input_number.764192001')|int }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "255"
+      target:
+        entity_id: input_number.764192001
+    - service: rest_command.light_level
+      data:
+        brightness: "255"
+        light: "764192001"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764192001
+    - service: rest_command.light_level
+      data:
+        brightness: "0"
+        light: "764192001"
+  set_level:
+    - service: input_number.set_value
+      data:
+        value: "{{ brightness }}"
+      target:
+        entity_id: input_number.764192001
+    - service: rest_command.light_level
+      data:
+        brightness: "{{ brightness }}"
+        light: "764192001"

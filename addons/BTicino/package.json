@@ -1,0 +1,16 @@
+{
+  "name": "BTicino addon",
+  "version": "1.0.0",
+  "description": "BTicino addon for Home Assistant",
+  "author": "Bogdan Ripa <bogdan.ripa@gmail.com>",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "request": "^2.88.0"
+  }
+}
+
