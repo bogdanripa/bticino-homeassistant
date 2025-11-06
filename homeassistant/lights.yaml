@@ -1,3 +1,19 @@
+lightpresence:
+  friendly_name: "Presence"
+  value_template: "{{ states('input_number.presence')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.presence
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.presence
+
 light764906201:
   friendly_name: "Master Bathroom Mirror Light"
   value_template: "{{ states('input_number.764906201')|int > 0 }}"
@@ -21,6 +37,303 @@ light764906201:
       data:
         level: "0"
         light: "764906201"
+
+light764905801:
+  friendly_name: "Master Bathroom Ceiling Light"
+  value_template: "{{ states('input_number.764905801')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.764905801
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "764905801"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764905801
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "764905801"
+
+light764905701:
+  friendly_name: "Guest Bathroom Light"
+  value_template: "{{ states('input_number.764905701')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.764905701
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "764905701"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764905701
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "764905701"
+
+light764906501:
+  friendly_name: "Kids Entry Light"
+  value_template: "{{ states('input_number.764906501')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.764906501
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "764906501"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764906501
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "764906501"
+
+light764904201:
+  friendly_name: "Kids Bathroom Light"
+  value_template: "{{ states('input_number.764904201')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.764904201
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "764904201"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764904201
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "764904201"
+
+light764901901:
+  friendly_name: "Master Hallway Light"
+  value_template: "{{ states('input_number.764901901')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.764901901
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "764901901"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764901901
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "764901901"
+
+light764902601:
+  friendly_name: "Back Door Light"
+  value_template: "{{ states('input_number.764902601')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.764902601
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "764902601"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764902601
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "764902601"
+
+light764904301:
+  friendly_name: "Stairs Light"
+  value_template: "{{ states('input_number.764904301')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.764904301
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "764904301"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764904301
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "764904301"
+
+light764906301:
+  friendly_name: "Kitchen Light"
+  value_template: "{{ states('input_number.764906301')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.764906301
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "764906301"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764906301
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "764906301"
+
+light762601401:
+  friendly_name: "Dining Led Light"
+  value_template: "{{ states('input_number.762601401')|int > 0 }}"
+  level_template: "{{ states('input_number.762601401')|int }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "255"
+      target:
+        entity_id: input_number.762601401
+    - service: rest_command.light_level
+      data:
+        brightness: "255"
+        light: "762601401"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.762601401
+    - service: rest_command.light_level
+      data:
+        brightness: "0"
+        light: "762601401"
+  set_level:
+    - service: input_number.set_value
+      data:
+        value: "{{ brightness }}"
+      target:
+        entity_id: input_number.762601401
+    - service: rest_command.light_level
+      data:
+        brightness: "{{ brightness }}"
+        light: "762601401"
+
+light764191501:
+  friendly_name: "Guest Bedroom Light"
+  value_template: "{{ states('input_number.764191501')|int > 0 }}"
+  level_template: "{{ states('input_number.764191501')|int }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "255"
+      target:
+        entity_id: input_number.764191501
+    - service: rest_command.light_level
+      data:
+        brightness: "255"
+        light: "764191501"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764191501
+    - service: rest_command.light_level
+      data:
+        brightness: "0"
+        light: "764191501"
+  set_level:
+    - service: input_number.set_value
+      data:
+        value: "{{ brightness }}"
+      target:
+        entity_id: input_number.764191501
+    - service: rest_command.light_level
+      data:
+        brightness: "{{ brightness }}"
+        light: "764191501"
+
+light764191301:
+  friendly_name: "Kids Bedside Light"
+  value_template: "{{ states('input_number.764191301')|int > 0 }}"
+  level_template: "{{ states('input_number.764191301')|int }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "255"
+      target:
+        entity_id: input_number.764191301
+    - service: rest_command.light_level
+      data:
+        brightness: "255"
+        light: "764191301"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.764191301
+    - service: rest_command.light_level
+      data:
+        brightness: "0"
+        light: "764191301"
+  set_level:
+    - service: input_number.set_value
+      data:
+        value: "{{ brightness }}"
+      target:
+        entity_id: input_number.764191301
+    - service: rest_command.light_level
+      data:
+        brightness: "{{ brightness }}"
+        light: "764191301"
 
 light764192001:
   friendly_name: "Master Bedroom Light"
@@ -56,3 +369,226 @@ light764192001:
       data:
         brightness: "{{ brightness }}"
         light: "764192001"
+
+light758975701:
+  friendly_name: "Kids TV Light"
+  value_template: "{{ states('input_number.758975701')|int > 0 }}"
+  level_template: "{{ states('input_number.758975701')|int }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "255"
+      target:
+        entity_id: input_number.758975701
+    - service: rest_command.light_level
+      data:
+        brightness: "255"
+        light: "758975701"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.758975701
+    - service: rest_command.light_level
+      data:
+        brightness: "0"
+        light: "758975701"
+  set_level:
+    - service: input_number.set_value
+      data:
+        value: "{{ brightness }}"
+      target:
+        entity_id: input_number.758975701
+    - service: rest_command.light_level
+      data:
+        brightness: "{{ brightness }}"
+        light: "758975701"
+
+light767043701:
+  friendly_name: "Kitchen Structure Light"
+  value_template: "{{ states('input_number.767043701')|int > 0 }}"
+  level_template: "{{ states('input_number.767043701')|int }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "255"
+      target:
+        entity_id: input_number.767043701
+    - service: rest_command.light_level
+      data:
+        brightness: "255"
+        light: "767043701"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.767043701
+    - service: rest_command.light_level
+      data:
+        brightness: "0"
+        light: "767043701"
+  set_level:
+    - service: input_number.set_value
+      data:
+        value: "{{ brightness }}"
+      target:
+        entity_id: input_number.767043701
+    - service: rest_command.light_level
+      data:
+        brightness: "{{ brightness }}"
+        light: "767043701"
+
+light706247701:
+  friendly_name: "Living Light"
+  value_template: "{{ states('input_number.706247701')|int > 0 }}"
+  level_template: "{{ states('input_number.706247701')|int }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "255"
+      target:
+        entity_id: input_number.706247701
+    - service: rest_command.light_level
+      data:
+        brightness: "255"
+        light: "706247701"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.706247701
+    - service: rest_command.light_level
+      data:
+        brightness: "0"
+        light: "706247701"
+  set_level:
+    - service: input_number.set_value
+      data:
+        value: "{{ brightness }}"
+      target:
+        entity_id: input_number.706247701
+    - service: rest_command.light_level
+      data:
+        brightness: "{{ brightness }}"
+        light: "706247701"
+
+light762601501:
+  friendly_name: "Dining Light"
+  value_template: "{{ states('input_number.762601501')|int > 0 }}"
+  level_template: "{{ states('input_number.762601501')|int }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "255"
+      target:
+        entity_id: input_number.762601501
+    - service: rest_command.light_level
+      data:
+        brightness: "255"
+        light: "762601501"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.762601501
+    - service: rest_command.light_level
+      data:
+        brightness: "0"
+        light: "762601501"
+  set_level:
+    - service: input_number.set_value
+      data:
+        value: "{{ brightness }}"
+      target:
+        entity_id: input_number.762601501
+    - service: rest_command.light_level
+      data:
+        brightness: "{{ brightness }}"
+        light: "762601501"
+
+light767044201:
+  friendly_name: "Entry Light"
+  value_template: "{{ states('input_number.767044201')|int > 0 }}"
+  level_template: "{{ states('input_number.767044201')|int }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "255"
+      target:
+        entity_id: input_number.767044201
+    - service: rest_command.light_level
+      data:
+        brightness: "255"
+        light: "767044201"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.767044201
+    - service: rest_command.light_level
+      data:
+        brightness: "0"
+        light: "767044201"
+  set_level:
+    - service: input_number.set_value
+      data:
+        value: "{{ brightness }}"
+      target:
+        entity_id: input_number.767044201
+    - service: rest_command.light_level
+      data:
+        brightness: "{{ brightness }}"
+        light: "767044201"
+
+light767203301:
+  friendly_name: "Unknown Light"
+  value_template: "{{ states('input_number.767203301')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.767203301
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "767203301"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.767203301
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "767203301"
+
+light763524901:
+  friendly_name: "Eating Light"
+  value_template: "{{ states('input_number.763524901')|int > 0 }}"
+  turn_on:
+    - service: input_number.set_value
+      data:
+        value: "1"
+      target:
+        entity_id: input_number.763524901
+    - service: rest_command.light_level
+      data:
+        level: "1"
+        light: "763524901"
+  turn_off:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.763524901
+    - service: rest_command.light_level
+      data:
+        level: "0"
+        light: "763524901"
