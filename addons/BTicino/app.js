@@ -175,6 +175,7 @@ function updateStatus(type, id, level) {
 function lightAction(level, id) {
         var what = settings.lights[id].type;
         if (what == 'dimmer' && level == 1) level = 2;
+        log("Received home assistant status update: " + what + " (" + id + ") was set to " + level);
 
         if (settings.lights[id].level != level) {
                 //log("Setting " + settings.lights[light].name +  " light level to " + level);
@@ -189,6 +190,7 @@ function lightAction(level, id) {
 
 function setShutterPosition(id, level) {
         var what = 'shutter';
+        log("Received home assistant status update: " + what + " (" + id + ") was set to " + level);
         if (settings.shutters[id].level != level) {
                 if (level > 0 && level < 5) level = 0;
                 //log("Setting " + settings.shutters[shutter].name + " shutter level to " + level);
@@ -228,7 +230,7 @@ function setShutterPosition(id, level) {
                                 }
                 }
         } else {
-                log("Ignoring home assistant status update for shutter (" + id + "). Level is already " + level);
+                log("Ignoring home assistant status update for " + what + " (" + id + "). Level is already " + level);
         }
 }
 
