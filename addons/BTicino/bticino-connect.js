@@ -11,6 +11,7 @@ class BTicinoConnection {
         this.updateStatus = updateStatus;
 
         this.rawData = "";
+        this.lastMessage = '';
         this.messages = [];
         this.messagesToSend = [];
         this.lastMessageTimestamp = undefined;
@@ -49,6 +50,11 @@ class BTicinoConnection {
 
         this.client.connect(this.port, this.ip, () => {
             this.log("Connected to BTicino Hub");
+            if (this.lastMessage) {
+                this.log('Resending last message: ' + this.lastMessage);
+                this.messagesToSend.unshift(this.lastMessage);
+                this.lastMessage = '';
+            }
             this.status = 'connected';
         });
     }
@@ -177,11 +183,12 @@ class BTicinoConnection {
                 this.log("Received: " + message + " - shutter status information.");
                 this.updateStatus('shutter', matches[2], parseInt(matches[1]));
             } else if (message == '#*1' && this.status == 'authenticated') {
-                // command sent confirmation, do nothing
-                this.log("Received: " + message + " while " + this.status + ".");
+                // athenticated command sent confirmation, do nothing
+                this.log("Received: Authentication confirmation.");
             } else if (message == '#*1' && this.status == 'sending') {
                 // command sent confirmation
-                this.log("Received: " + message + " while " + this.status + ".");
+                this.lastMessage = '';
+                this.log("Received: Message sent confirmation.");
                 this.status = 'authenticated';
             } else {
                 this.log("Received unknown message: " + message + " while " + this.status + ".");
@@ -201,7 +208,8 @@ class BTicinoConnection {
         if (this.status == 'authenticated') {
             var message = this.messagesToSend.shift()
             this.status = 'sending';
-            this.log('Send:     ' + message);
+            this.lastMessage = message;
+            this.log('Sending:  ' + message);
             this.client.write('*' + message + '##');
         }
         if (this.status == 'disconnected') {
