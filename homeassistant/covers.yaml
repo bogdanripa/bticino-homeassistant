@@ -38,3 +38,444 @@ cover2509101:
         position: "{{ position }}"
         shutter: "2509101"
 
+cover2505701:
+  friendly_name: "Living Back Shade"
+  device_class: shutter
+  value_template: "{{ states('input_number.2505701')|int > 0 }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2505701
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2505701"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2505701
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2505701"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2505701"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2505701
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2505701"
+
+cover2505801:
+  friendly_name: "Stairs Mid Shade"
+  device_class: shutter
+  value_template: "{{ states('input_number.2505801')|int > 0 }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2505801
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2505801"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2505801
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2505801"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2505801"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2505801
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2505801"
+
+cover2506701:
+  friendly_name: "Master Bedroom Shade"
+  device_class: shutter
+  value_template: "{{ states('input_number.2506701')|int > 0 }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2506701
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2506701"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2506701
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2506701"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2506701"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2506701
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2506701"
+
+cover2512701:
+  friendly_name: "Entry Door Shade"
+  device_class: shutter
+  value_template: "{{ states('input_number.2512701')|int > 0 }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2512701
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2512701"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2512701
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2512701"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2512701"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2512701
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2512701"
+
+cover2505901:
+  friendly_name: "Kitchen Left Shade"
+  unique_id: kitchen_left_shade
+  device_class: shutter
+  position_template: "{{ states('input_number.2505901')|int }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2505901
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2505901"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2505901
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2505901"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2505901"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2505901
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2505901"
+
+cover2512501:
+  friendly_name: "Kitchen Right Shade"
+  device_class: shutter
+  value_template: "{{ states('input_number.2512501')|int > 0 }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2512501
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2512501"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2512501
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2512501"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2512501"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2512501
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2512501"
+
+cover2510201:
+  friendly_name: "Stairs Low Shade"
+  device_class: shutter
+  value_template: "{{ states('input_number.2510201')|int > 0 }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2510201
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2510201"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2510201
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2510201"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2510201"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2510201
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2510201"
+
+cover2509401:
+  friendly_name: "Dining Shade"
+  device_class: shutter
+  value_template: "{{ states('input_number.2509401')|int > 0 }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2509401
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2509401"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2509401
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2509401"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2509401"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2509401
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2509401"
+
+cover2509301:
+  friendly_name: "Kids Left Shade"
+  unique_id: kids_left_shade
+  device_class: shutter
+  position_template: "{{ states('input_number.2509301')|int }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2509301
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2509301"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2509301
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2509301"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2509301"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2509301
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2509301"
+
+cover2509201:
+  friendly_name: "Kids Right Shade"
+  device_class: shutter
+  value_template: "{{ states('input_number.2509201')|int > 0 }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2509201
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2509201"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2509201
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2509201"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2509201"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2509201
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2509201"
+
+cover2514001:
+  friendly_name: "Guest Room Shade"
+  device_class: shutter
+  value_template: "{{ states('input_number.2514001')|int > 0 }}"
+  open_cover:
+    - service: input_number.set_value
+      data:
+        value: "100"
+      target:
+        entity_id: input_number.2514001
+    - service: rest_command.shutter_action
+      data:
+        action: "open"
+        shutter: "2514001"
+  close_cover:
+    - service: input_number.set_value
+      data:
+        value: "0"
+      target:
+        entity_id: input_number.2514001
+    - service: rest_command.shutter_action
+      data:
+        action: "close"
+        shutter: "2514001"
+  stop_cover:
+    - service: rest_command.shutter_action
+      data:
+        action: "stop"
+        shutter: "2514001"
+  set_cover_position:
+    - service: input_number.set_value
+      data:
+        value: "{{ position }}"
+      target:
+        entity_id: input_number.2514001
+    - service: rest_command.shutter_action
+      data:
+        position: "{{ position }}"
+        shutter: "2514001"
