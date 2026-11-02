@@ -24,31 +24,47 @@ class BTicinoConnection {
 
     #connect() {
         this.status = 'connecting';
-        this.client = new net.Socket();
+        const client = new net.Socket();
+        this.client = client;
+        client.setNoDelay(true);
+        client.setKeepAlive(true, 15000);
+        // Don't wait forever for the hub to accept the connection.
+        client.setTimeout(5000);
 
-        this.client.on('error', (err) => {
-                this.log("Socket Error: " + err);
+        client.on('timeout', () => {
+            if (this.client === client && this.status === 'connecting') {
+                this.log('Hub connect timeout, retrying.');
+                client.destroy();
+            }
+        });
+
+        // 'close' always follows 'error', and does the cleanup / restart.
+        client.on('error', (err) => {
+            this.log("Socket Error: " + err);
+        });
+
+        client.on('data', (data) => {
+            if (this.client !== client) return;
+            this.rawData += data;
+            this.#processRawData();
+        });
+
+        client.on('close', () => {
+            if (this.client !== client) return; // stale socket, a newer one is active
+            if (!this.monitoring) {
+                this.log('Hub connection closed.');
                 this.status = 'disconnected';
                 this.client = undefined;
+                this.rawData = "";
+            } else {
+                this.log('Hub connection closed, restarting...');
+                process.exit();
+            }
         });
 
-        this.client.on('data', (data) => {
-                this.rawData += data;
-                this.#processRawData();
-        });
-
-        this.client.on('close', () => {
-            if (!this.monitoring) {
-                    this.log('Hub connection closed, resetting connection...');
-                    this.status = 'disconnected';
-                    this.client = undefined;
-                } else {
-                    this.log('Hub connection closed, restarting...');
-                    process.exit();
-                }
-        });
-
-        this.client.connect(this.port, this.ip, () => {
+        client.connect(this.port, this.ip, () => {
+            if (this.client !== client) return;
+            client.setTimeout(0);
             this.log("Connected to BTicino Hub");
             if (this.lastMessage) {
                 this.log('Resending last message: ' + this.lastMessage);
@@ -167,6 +183,7 @@ class BTicinoConnection {
         var message;
         var matches;
         while (message = this.messages.shift()) {
+            message = message.replace(/^(\d+)\*1000#/, '$1*');
             this.lastMessageTimestamp = (new Date()).getTime();
             if (message == '#*1' && this.status == 'connected') {
                 this.status = 'handshaking';
@@ -192,6 +209,9 @@ class BTicinoConnection {
                 this.status = 'authenticated';
             } else {
                 this.log("Received unknown message: " + message + " while " + this.status + ".");
+                if (this.status == 'sending') {
+                    this.status = 'authenticated';
+                }
             }
         }
     }
@@ -201,7 +221,8 @@ class BTicinoConnection {
         if (this.status == 'sending') {
             if ((new Date()).getTime() - this.lastMessageTimestamp > 5000) {
                 this.log("No message received in the last 5 seconds, restarting connection.");
-                this.client.destroy();
+                if (this.client) this.client.destroy();
+                else this.status = 'disconnected';
             }
             return; // already sending, push back
         }
@@ -213,7 +234,7 @@ class BTicinoConnection {
             this.client.write('*' + message + '##');
         }
         if (this.status == 'disconnected') {
-            this.log("Connection lost, reconnecting.");
+            this.log("Connection not present, reconnecting.");
             this.#connect();
         }
     }

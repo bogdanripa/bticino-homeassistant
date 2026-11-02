@@ -28,23 +28,58 @@ function restartOnSilence() {
 setInterval(restartOnSilence, 10000); //check every 10 seconds
 
 const settingsFile = "/config/bticino-settings.json";
-// const settingsFile = "./bticino-settings.json";
+//const settingsFile = "./bticino-settings.json";
 if (!fs.existsSync(settingsFile)) {
         fs.copyFileSync('./settings.template.json', settingsFile);
         log("Init settings file");
 }
 var settings = require(settingsFile);
 
+// Settings are saved asynchronously and batched. A synchronous write here used to
+// freeze the whole process (and every pending HTTP reply) whenever the SD card
+// was congested, making Home Assistant's rest_command calls time out.
+var saveTimer = null;
+var saving = false;
+var savePending = false;
+
 function cacheSettings() {
-        var json = JSON.stringify(settings, null, '\t');
-        fs.writeFileSync(settingsFile, json);
+        if (saveTimer) return;
+        saveTimer = setTimeout(flushSettings, 2000);
 }
+
+function flushSettings() {
+        saveTimer = null;
+        if (saving) {
+                savePending = true;
+                return;
+        }
+        saving = true;
+        var json = JSON.stringify(settings, null, '\t');
+        var tmp = settingsFile + '.tmp';
+        fs.promises.writeFile(tmp, json)
+                .then(function() { return fs.promises.rename(tmp, settingsFile); })
+                .catch(function(err) { log("Failed to save settings: " + err); })
+                .finally(function() {
+                        saving = false;
+                        if (savePending) {
+                                savePending = false;
+                                cacheSettings();
+                        }
+                });
+}
+
+// Don't lose a pending save when the process exits (restartOnSilence, hub monitor restart).
+process.on('exit', function() {
+        if (saveTimer || savePending) {
+                try { fs.writeFileSync(settingsFile, JSON.stringify(settings, null, '\t')); } catch (e) {}
+        }
+});
 
 pClient = new BTicinoConnection(settings.gwIP, settings.gwPort, settings.gwPwd, true, log, updateStatus);
 cClient = new BTicinoConnection(settings.gwIP, settings.gwPort, settings.gwPwd, false, log);
 
-function updateHelper(id, level, type) {
-        log("Sending hub update to home assistant: " + type + " (" + id + ") was set to " + level);
+function updateHelper(id, level, type, name) {
+        log("Sending hub update to home assistant: " + name + " (" + id + ") was set to " + level);
         let url = `http://homeassistant.local:8123/api/services/`;
         let data = {};
 
@@ -87,29 +122,29 @@ function updateHelper(id, level, type) {
         });
 }
 
-function lightStatusUpdate(id, level) {    
+function lightStatusUpdate(id, level) {
         if (!settings.lights[id]) {
                 settings.lights[id] = {
                         name: 'Light ' + (Object.keys(settings.lights).length + 1),
                         type: 'switch'
                 };
-                cacheSettings();
-        }
-        log("Received hub status update: "+settings.lights[id].type+" ("+id+") set to " + level);
-
+        }        
         if (settings.lights[id].type == 'switch' && level > 1) settings.lights[id].type = 'dimmer';
+        var name = settings.lights[id].name;
+        
+        log("Received hub status update: " + name + " (" + id + ") set to " + level);
 
         if (settings.lights[id].level == level) {
-                log("Ignoring hub status update for " + settings.lights[id].type + " (" + id + "). Level was " + level);
+                log("Ignoring hub status update for " + name + " (" + id + "). Level was " + level);
                 return;
         }
         if (lastSentMessage[settings.lights[id].type + "_" + id] && (new Date()).getTime() - lastSentMessage[settings.lights[id].type + "_" + id] < 5000 ) {
-                log("Ignoring hub status update for " + settings.lights[id].type + " (" + id + "). Update came in too fast.");
+                log("Ignoring hub status update for " + name + " (" + id + "). Update came in too fast.");
                 return;
         }
 
         settings.lights[id].level = level;
-        updateHelper(id.replace(/#.*$/, ''), level, settings.lights[id].type);
+        updateHelper(id.replace(/#.*$/, ''), level, settings.lights[id].type, name);
         cacheSettings();
 }
 
@@ -120,9 +155,9 @@ function shutterStatusUpdate(id, level) {
                         type: 'shutter',
                         level: -1
                 };
-                cacheSettings();
         }
-        log("Received hub status update: shutter ("+id+") set to " + level);
+        var name = settings.shutters[id].name;
+        log("Received hub status update: " + name + " ("+id+") set to " + level);
 
         switch(level) {
                 case 1:
@@ -140,21 +175,21 @@ function shutterStatusUpdate(id, level) {
         }
 
         if (level != 0 && level != 100) {
-                log("Ignoring hub status update for shutter (" + id + "). Level was " + level);
+                log("Ignoring hub status update for " + name + " (" + id + "). Level was " + level);
                 return;
         }
         
         if (settings.shutters[id].level == level){
-                log("Ignoring hub status update for shutter (" + id + "). Level did not change: " + level);
+                log("Ignoring hub status update for " + name + " (" + id + "). Level did not change: " + level);
                 return;
         }
         if (lastSentMessage["shutter_" + id] && (new Date()).getTime() - lastSentMessage["shutter_" + id] < 10000 ) {
-                log("Ignoring hub status update for shutter (" + id + "). Update came in too fast.");
+                log("Ignoring hub status update for " + name + " (" + id + "). Update came in too fast.");
                 return;
         }
 
         settings.shutters[id].level = level;
-        updateHelper(id.replace(/#.*$/, ''), level, 'shutter');
+        updateHelper(id.replace(/#.*$/, ''), level, 'shutter', name);
         cacheSettings();
 }
 
@@ -175,22 +210,25 @@ function updateStatus(type, id, level) {
 function lightAction(level, id) {
         var what = settings.lights[id].type;
         if (what == 'dimmer' && level == 1) level = 2;
-        log("Received home assistant status update: " + what + " (" + id + ") was set to " + level);
+
+        var name = settings.lights[id].name;
+        log("Received home assistant status update: " + name + " (" + id + ") was set to " + level);
 
         if (settings.lights[id].level != level) {
-                //log("Setting " + settings.lights[light].name +  " light level to " + level);
+                //log("Setting " + settings.lights[id].name +  " light level to " + level);
                 settings.lights[id].level = level;
                 lastSentMessage[what + "_" + id] = (new Date()).getTime();
                 cClient.sendCommand('light', level, id);
                 cacheSettings();
         } else {
-                log("Ignoring home assistant status update for " + what + " (" + id + "). Level is already " + level);
+                log("Ignoring home assistant status update for " + name + " (" + id + "). Level is already " + level);
         }
 }
 
 function setShutterPosition(id, level) {
         var what = 'shutter';
-        log("Received home assistant status update: " + what + " (" + id + ") was set to " + level);
+        var name = settings.shutters[id].name;
+        log("Received home assistant status update: " + name + " (" + id + ") was set to " + level);
         if (settings.shutters[id].level != level) {
                 if (level > 0 && level < 5) level = 0;
                 //log("Setting " + settings.shutters[shutter].name + " shutter level to " + level);
@@ -210,27 +248,27 @@ function setShutterPosition(id, level) {
                                 if (oldLevel > level) {
                                         // open a bit
                                         lastSentMessage[what + "_" + id] = (new Date()).getTime();
-                                        cClient.sendCommand(what, id, 0);
+                                        cClient.sendCommand(what, 0, id);
                                         var timeOut = ((oldLevel - level)/100*settings.shutterCycleSeconds*1000);
                                         setTimeout(function() {
                                                 lastSentMessage[what + "_" + id] = (new Date()).getTime();
-                                                cClient.sendCommand(what, id, level);
+                                                cClient.sendCommand(what, level, id);
                                                 //log("Done setting " + settings.shutters[shutter].name + " shutter level to " + level);
                                         }, timeOut);
                                 } else {
                                         // close a bit
                                         lastSentMessage[what + "_" + id] = (new Date()).getTime();
-                                        cClient.sendCommand(what, id, 100);
+                                        cClient.sendCommand(what, 100, id);
                                         var timeOut = ((level - oldLevel)/100*settings.shutterCycleSeconds*1000);
                                         setTimeout(function() {
                                                 lastSentMessage[what + "_" + id] = (new Date()).getTime();
-                                                cClient.sendCommand(what, id, level);
+                                                cClient.sendCommand(what, level, id);
                                                 //log("Done setting " + settings.shutters[shutter].name + " shutter level to " + level);
                                         }, timeOut);
                                 }
                 }
         } else {
-                log("Ignoring home assistant status update for " + what + " (" + id + "). Level is already " + level);
+                log("Ignoring home assistant status update for " + name + " (" + id + "). Level is already " + level);
         }
 }
 
@@ -382,7 +420,11 @@ app.post('/lights/:light', function(req, res) {
                 }
 
                 if (req.body && req.body.name) {
-                        settings.lights[req.params.light].name = req.body.name;
+                        log("Setting " + req.params.light + " light name to: " + req.body.name);
+                        if (settings.lights[req.params.light]) {
+                                settings.lights[req.params.light].name = req.body.name;
+                                cacheSettings();
+                        }
                 }
 
                 if (success) {
@@ -407,7 +449,7 @@ app.post('/shutters/:shutter', function(req, res) {
         // Handle a "stop" action from Home Assistant / Apple Home
         if (req.body && req.body.action === 'stop') {
                 //log(`Stopping shutter ${shutterId}`);
-                bticinoConnect('shutter', shutterId, 50);
+                cClient.sendCommand('shutter', 50, shutterId);
                 success = true;
         }
 
@@ -433,9 +475,11 @@ app.post('/shutters/:shutter', function(req, res) {
 
         // Optional: allow renaming via API
         if (req.body && req.body.name) {
-                shutter.name = req.body.name;
-                cacheSettings();
-                success = true;
+                log("Setting " + shutterId + " shutter name to: " + req.body.name);
+                if (settings.shutters[shutterId]) {
+                        settings.shutters[shutterId].name = req.body.name;
+                        cacheSettings();
+                }
         }
 
         res.sendStatus(success ? 200 : 500);
