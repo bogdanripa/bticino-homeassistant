@@ -1,6 +1,6 @@
 name: "BTicino"
 description: "BTicino local addon"
-version: "1.9.4"
+version: "1.9.5"
 slug: "bticino"
 init: false
 arch:

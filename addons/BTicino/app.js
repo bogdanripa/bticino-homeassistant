@@ -79,46 +79,29 @@ pClient = new BTicinoConnection(settings.gwIP, settings.gwPort, settings.gwPwd, 
 cClient = new BTicinoConnection(settings.gwIP, settings.gwPort, settings.gwPwd, false, log);
 
 function updateHelper(id, level, type, name) {
-        log("Sending hub update to home assistant: " + name + " (" + id + ") was set to " + level);
-        let url = `http://homeassistant.local:8123/api/services/`;
-        let data = {};
-
+        // HA's template lights/covers take their state from input_number.<id>,
+        // so mirror hub changes there (setting the helper doesn't call back into this app).
+        var value;
         if (type == 'shutter') {
-                data.entity_id = 'cover.cover' + id;
-                if (level == 0)
-                        url += 'cover/close_cover'
-                else if (level == 100)
-                        url += 'cover/open_cover'
-                else {
-                        url += 'cover/set_cover_position';
-                        data.position = level
-                }
+                value = parseInt(level);                       // 0 = closed, 100 = open
+        } else if (type == 'dimmer') {
+                value = level == 0 ? 0 : Math.min(255, parseInt(level) * 25);
+                if (value == 250) value = 255;
         } else {
-                data.entity_id = 'light.light' + id;
-                if (level == 0)
-                        url += 'light/turn_off';
-                else
-                        url += 'light/turn_on';
+                value = level == 0 ? 0 : 1;                    // switch
         }
-
-        if (type == 'dimmer' && level != 0) {
-                var brightness = parseInt(level)*25;
-                if (brightness == 250) brightness = 255;
-                data.brightness = brightness;
-        }
-
-        const headers = {
-                Authorization: `Bearer ${settings.haToken}`,
-        };
+        log("Sending hub update to home assistant: " + name + " (" + id + ") was set to " + level + " -> input_number." + id + " = " + value);
 
         request({
                 method: "POST",
-                url: url,
-                headers: headers,
-                body: JSON.stringify(data)
+                url: `http://homeassistant.local:8123/api/services/input_number/set_value`,
+                headers: { Authorization: `Bearer ${settings.haToken}` },
+                body: JSON.stringify({ entity_id: 'input_number.' + id, value: value })
         }, function(err, res2, body) {
                 if (err)
-                        log(monitor + ' ' + err);
+                        log("HA update failed for " + name + ": " + err);
+                else if (res2 && res2.statusCode >= 300)
+                        log("HA update for " + name + " returned HTTP " + res2.statusCode + ": " + body);
         });
 }
 
